@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
+    android:background="@color/colorActionBar"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FaceDetectorService">
@@ -10,15 +11,17 @@
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="480dp">
 
-        <android.support.design.widget.FloatingActionButton
+    </FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:layout_margin="16dp"
-            android:src="@mipmap/cam_icon"
-            app:backgroundTint="#FFFFFF" />
-    </FrameLayout>
+        android:layout_gravity="center|bottom"
+        android:layout_margin="30dp"
+        android:src="@mipmap/cam_icon"
+        app:backgroundTint="#FFFFFF" />
+
 </LinearLayout>

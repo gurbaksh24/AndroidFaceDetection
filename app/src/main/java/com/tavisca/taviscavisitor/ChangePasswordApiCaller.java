@@ -3,20 +3,18 @@ package com.tavisca.taviscavisitor;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-public class LoginClient extends AsyncTask<String, Void, String> {
+public class ChangePasswordApiCaller extends AsyncTask<String, Void, String> {
+
     String response = null;
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -32,46 +30,30 @@ public class LoginClient extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... employeeData) {
+    protected String doInBackground(String... empty) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
         URL apiEndPoint = null;
         try {
-
-            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/User/Login");
+            apiEndPoint = new URL("http://visitortavisca-dev.ap-south-1.elasticbeanstalk.com/api/Guard");
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) apiEndPoint.openConnection();
-            httpURLConnection.setRequestMethod("PUT");
-            httpURLConnection.setRequestProperty("Accept", "application/json");
-            httpURLConnection.setRequestProperty("Content-Type", "application/json");
-
-            OutputStream outStream = httpURLConnection.getOutputStream();
-            OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream, "UTF-8");
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("UserId", employeeData[0]);
-            jsonObject.put("Password", employeeData[1]);
-
-            outStreamWriter.write(String.valueOf(jsonObject));
-            outStreamWriter.flush();
-            outStreamWriter.close();
-            outStream.close();
+            httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.connect();
-
             if (httpURLConnection.getResponseCode() == 200) {
                 InputStream responseBody = httpURLConnection.getInputStream();
-                String response = readFromStream(responseBody);
-                return response;
+                response = readFromStream(responseBody);
+            } else {
+                response = "Something went wrong";
             }
             httpURLConnection.disconnect();
-            return  null;
-        }
-        catch (Exception e) {
+            return response;
+        } catch (Exception e) {
             e.printStackTrace();
-            return  null;
+            return null;
         }
     }
 

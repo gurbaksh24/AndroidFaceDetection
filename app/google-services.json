@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "977839442409",
+    "firebase_url": "https://taviscavisitor.firebaseio.com",
+    "project_id": "taviscavisitor",
+    "storage_bucket": "taviscavisitor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977839442409:android:009d3eb8cbaf141b",
+        "android_client_info": {
+          "package_name": "com.tavisca.taviscavisitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "977839442409-71gnjseqj9o6to5aojjrki06k1vb8e10.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tavisca.taviscavisitor",
+            "certificate_hash": "1b1d065fdc2d806f31089f421f943fee7dac1573"
+          }
+        },
+        {
+          "client_id": "977839442409-kmtklikld83co1l925magcerern79nef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWTHTj0VWrcYGBL9fQ8aqs1yGs9fa2w_o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "977839442409-kmtklikld83co1l925magcerern79nef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

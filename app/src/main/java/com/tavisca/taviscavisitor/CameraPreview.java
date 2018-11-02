@@ -21,14 +21,24 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // underlying surface is created and destroyed.
         mHolder = getHolder();
         mHolder.addCallback(this);
+
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
+    public void startFaceDetection() {
+        // Try starting Face Detection
+        Camera.Parameters params = mCamera.getParameters();
+
+        // start face detection only *after* preview has started
+        if (params.getMaxNumDetectedFaces() > 0) {
+            // camera supports face detection, so can start it:
+            mCamera.startFaceDetection();
+        }
+    }
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, now tell the camera where to draw the preview.
         Camera.Parameters params = mCamera.getParameters();
-
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
             params.set("orientation", "portrait");
             mCamera.setDisplayOrientation(90);
@@ -39,6 +49,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
+            startFaceDetection();
         } catch (IOException e) {
             Log.d("Camera Error", "Error setting camera preview: " + e.getMessage());
         }
@@ -52,16 +63,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // If your preview can change or rotate, take care of those events here.
         // Make sure to stop the preview before resizing or reformatting it.
 
-        if (mHolder.getSurface() == null) {
-            // preview surface does not exist
-            return;
-        }
+        if (mHolder.getSurface() == null)
+            return;                                                                  // preview surface does not exist
 
         // stop preview before making changes
         try {
             mCamera.stopPreview();
-        } catch (Exception e) {
-            // ignore: tried to stop a non-existent preview
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
 
         // set preview size and make any resize, rotate or

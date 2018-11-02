@@ -15,8 +15,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-public class LoginClient extends AsyncTask<String, Void, String> {
+public class LogoutApiCaller extends AsyncTask<String, Void, String> {
     String response = null;
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -39,7 +40,7 @@ public class LoginClient extends AsyncTask<String, Void, String> {
         URL apiEndPoint = null;
         try {
 
-            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/User/Login");
+            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/User/Logout");
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) apiEndPoint.openConnection();
             httpURLConnection.setRequestMethod("PUT");
@@ -50,8 +51,7 @@ public class LoginClient extends AsyncTask<String, Void, String> {
             OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream, "UTF-8");
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("UserId", employeeData[0]);
-            jsonObject.put("Password", employeeData[1]);
+            jsonObject.put("UserInput", employeeData[0]);
 
             outStreamWriter.write(String.valueOf(jsonObject));
             outStreamWriter.flush();
@@ -67,11 +67,10 @@ public class LoginClient extends AsyncTask<String, Void, String> {
                 return response;
             }
             httpURLConnection.disconnect();
-            return  null;
-        }
-        catch (Exception e) {
+            return null;
+        } catch (Exception e) {
             e.printStackTrace();
-            return  null;
+            return null;
         }
     }
 

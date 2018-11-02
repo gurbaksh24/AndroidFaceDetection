@@ -15,8 +15,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-public class LoginClient extends AsyncTask<String, Void, String> {
+public class NewVisitorEntryApiCaller extends AsyncTask<String, Void, String> {
+
     String response = null;
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -32,46 +34,52 @@ public class LoginClient extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... employeeData) {
+    protected String doInBackground(String... visitorData) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
         URL apiEndPoint = null;
         try {
-
-            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/User/Login");
+            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/Visitors/AddNewVisitor");
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) apiEndPoint.openConnection();
-            httpURLConnection.setRequestMethod("PUT");
+            httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Accept", "application/json");
             httpURLConnection.setRequestProperty("Content-Type", "application/json");
+
 
             OutputStream outStream = httpURLConnection.getOutputStream();
             OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream, "UTF-8");
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("UserId", employeeData[0]);
-            jsonObject.put("Password", employeeData[1]);
+            jsonObject.put("nameOfVisitor", visitorData[0]);
+            jsonObject.put("contactNo", visitorData[1]);
+            jsonObject.put("govtIdProof", visitorData[2]);
+            jsonObject.put("comingFrom", visitorData[3]);
+            jsonObject.put("whomToMeet", visitorData[4]);
+            jsonObject.put("purposeOfVisit", visitorData[5]);
+            jsonObject.put("guardId", visitorData[6]);
 
             outStreamWriter.write(String.valueOf(jsonObject));
             outStreamWriter.flush();
             outStreamWriter.close();
             outStream.close();
+
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.connect();
 
             if (httpURLConnection.getResponseCode() == 200) {
                 InputStream responseBody = httpURLConnection.getInputStream();
-                String response = readFromStream(responseBody);
-                return response;
+                response = readFromStream(responseBody);
+            } else {
+                response = "Something went wrong";
             }
             httpURLConnection.disconnect();
-            return  null;
-        }
-        catch (Exception e) {
+            return response;
+        } catch (Exception e) {
             e.printStackTrace();
-            return  null;
+            return null;
         }
     }
 

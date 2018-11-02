@@ -3,10 +3,14 @@ package com.tavisca.taviscavisitor;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -33,13 +37,27 @@ public class FaceRecognitionApiCaller extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... empty) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
+        String faceCompareType = "visitors";
         StrictMode.setThreadPolicy(policy);
         URL apiEndPoint = null;
         try {
-            apiEndPoint = new URL("http://visitortavisca-dev.ap-south-1.elasticbeanstalk.com/api/Guard");
+            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/CompareFaces");
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) apiEndPoint.openConnection();
-            httpURLConnection.setRequestMethod("GET");
+            //httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setRequestMethod("PUT");
+            httpURLConnection.setRequestProperty("Accept", "application/json");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("CollectionId", faceCompareType);
+
+            OutputStream outStream = httpURLConnection.getOutputStream();
+            OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream, "UTF-8");
+            outStreamWriter.write(String.valueOf(jsonObject));
+            outStreamWriter.flush();
+            outStreamWriter.close();
+            outStream.close();
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.connect();

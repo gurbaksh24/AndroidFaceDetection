@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:weightSum="8"
+    tools:context=".NewVisitorEntry">
+
+    <EditText
+        android:id="@+id/new_visitor_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Name of Visitor" />
+
+    <EditText
+        android:id="@+id/new_visitor_contact"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Contact" />
+
+    <EditText
+        android:id="@+id/new_visitor_govt_id"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Govt. Id Proof" />
+
+    <EditText
+        android:id="@+id/new_visitor_location"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Coming From" />
+
+    <EditText
+        android:id="@+id/new_visitor_meeting_person"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Whom to Meet" />
+    <!--   <AutoCompleteTextView
+           android:id="@+id/new_visitor_autocomplete"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/textView2"
+           android:layout_below="@+id/textView2"
+           android:layout_alignParentTop="true"
+           android:layout_marginTop="54dp"
+           android:layout_weight="1"
+           android:ems="10"
+           /> -->
+    <EditText
+        android:id="@+id/new_visitor_purpose"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Purpose of Visit" />
+
+    <Button
+        android:id="@+id/new_visitor_submit_btn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:backgroundTint="#6F7B8D"
+        android:text="Submit" />
+</LinearLayout>
