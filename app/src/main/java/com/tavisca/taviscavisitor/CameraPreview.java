@@ -12,7 +12,7 @@ import java.io.IOException;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
-
+    public boolean safeToTakePicture = false;
     public CameraPreview(Context context, Camera camera) {
         super(context);
         mCamera = camera;
@@ -80,7 +80,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
-
+            safeToTakePicture = true;
         } catch (Exception e) {
             Log.d("Camera Error", "Error starting camera preview: " + e.getMessage());
         }

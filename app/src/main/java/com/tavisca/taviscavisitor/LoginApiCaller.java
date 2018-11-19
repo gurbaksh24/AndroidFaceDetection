@@ -15,7 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-public class LoginClient extends AsyncTask<String, Void, String> {
+public class LoginApiCaller extends AsyncTask<String, Void, String> {
     String response = null;
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();

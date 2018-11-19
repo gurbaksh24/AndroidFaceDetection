@@ -10,10 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     EditText empId, password;
     Button loginBtn;
@@ -43,21 +44,25 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         readDataFromUI();
-                        LoginClient loginClient = new LoginClient();
-                        String response = null;
-                        try {
-                            response = loginClient.execute(empIdData, empPassData).get();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (response.equals("true")) {
-                            setSession(empIdData);
-                            openFaceDetectorActivity();
-                            finish();                                                                //Finish Current Activity
+                        if (!empIdData.equals("") && !empPassData.equals("")) {
+                            LoginApiCaller loginApiCaller = new LoginApiCaller();
+                            String response = null;
+                            try {
+                                response = loginApiCaller.execute(empIdData, empPassData).get();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (response.equals("true")) {
+                                setSession(empIdData);
+                                openApplicationChooserActivity();
+                                finish();                                                                //Finish Current Activity
+                            } else {
+                                errorMessage.setVisibility(v.VISIBLE);
+                            }
                         } else {
-                            errorMessage.setVisibility(v.VISIBLE);
+                            Toast.makeText(LoginActivity.this, "Emp Id and Password can not be empty", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -73,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         if (!sharedPreferences.getString("sessionId", "default").equals("default")) {
-            Intent faceDetectIntent = new Intent(MainActivity.this, FaceDetectorService.class);
+            Intent faceDetectIntent = new Intent(LoginActivity.this, ApplicationChooserActivity.class);
+            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(faceDetectIntent);
-            finish();
         }
     }
 
@@ -84,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    private void openFaceDetectorActivity() {
-        Intent faceDetectIntent = new Intent(MainActivity.this, FaceDetectorService.class);
+    private void openApplicationChooserActivity() {
+        Intent faceDetectIntent = new Intent(LoginActivity.this, ApplicationChooserActivity.class);
         startActivity(faceDetectIntent);
     }
 }

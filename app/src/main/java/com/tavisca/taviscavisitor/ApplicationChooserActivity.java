@@ -5,39 +5,49 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
-public class ThankYouActivity extends AppCompatActivity {
+public class ApplicationChooserActivity extends AppCompatActivity {
     static String PREFERENCE = "GuardSessionPref";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    String guardId;
+    Button visitor, employee;
+
+    void initializeItems() {
+        visitor = (Button) findViewById(R.id.application_chooser_visitor);
+        employee = (Button) findViewById(R.id.application_chooser_employee);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thank_you);
         android.support.v7.app.ActionBar bar = getSupportActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#161731")));
+        setContentView(R.layout.activity_application_chooser);
         checkSessionValidity();
-        expireActivityAfterFiveSeconds();
-    }
+        initializeItems();
+        visitor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ApplicationChooserActivity.this, FaceDetectorVisitorActivity.class);
+                startActivity(intent);
+            }
+        });
 
-    private void checkSessionValidity() {
-        sharedPreferences = getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        guardId = sharedPreferences.getString("sessionId", "default");
-        if (guardId.equals("default")) {
-            Intent faceDetectIntent = new Intent(getApplicationContext(), LoginActivity.class);
-            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(faceDetectIntent);
-        }
+        employee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ApplicationChooserActivity.this, FaceDetectorEmployeeActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -66,12 +76,12 @@ public class ThankYouActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void expireActivityAfterFiveSeconds() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                finish();
-            }
-        }, 5000);
+    private void checkSessionValidity() {
+        sharedPreferences = getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        if (sharedPreferences.getString("sessionId", "default").equals("default")) {
+            Intent faceDetectIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(faceDetectIntent);
+        }
     }
 }

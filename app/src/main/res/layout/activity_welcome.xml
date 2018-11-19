@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".WelcomeActivity">
+    tools:context=".WelcomeVisitorActivity">
 
     <TextView
         android:id="@+id/welcome_welcomeMessage"
@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="49dp"
         android:textColor="@color/colorActionBar"
-        android:textSize="42sp" />
+        android:textSize="32sp" />
 
     <EditText
         android:id="@+id/welcome_whomToMeet"

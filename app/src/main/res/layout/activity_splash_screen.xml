@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#59BBFF"
-    tools:context=".SplashScreen">
+    tools:context=".SplashScreenActivity">
 
     <ImageView
         android:id="@+id/imageView4"
@@ -14,4 +14,25 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:src="@drawable/taviscalogo" />
+
+    <TextView
+        android:id="@+id/splash_screen_error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:background="#FF0000"
+        android:text="You're Not Connected to Internet"
+        android:textAlignment="center"
+        android:visibility="invisible" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="145dp" />
 </RelativeLayout>

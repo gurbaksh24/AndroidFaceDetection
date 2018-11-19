@@ -34,10 +34,9 @@ public class FaceRecognitionApiCaller extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... empty) {
+    protected String doInBackground(String... faceCompareType) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
-        String faceCompareType = "visitors";
         StrictMode.setThreadPolicy(policy);
         URL apiEndPoint = null;
         try {
@@ -50,7 +49,7 @@ public class FaceRecognitionApiCaller extends AsyncTask<String, Void, String> {
             httpURLConnection.setRequestProperty("Content-Type", "application/json");
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("CollectionId", faceCompareType);
+            jsonObject.put("CollectionId", faceCompareType[0]);
 
             OutputStream outStream = httpURLConnection.getOutputStream();
             OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream, "UTF-8");

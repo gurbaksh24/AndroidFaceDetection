@@ -16,9 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
-
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeVisitorActivity extends AppCompatActivity {
 
     static String PREFERENCE = "GuardSessionPref";
     SharedPreferences sharedPreferences;
@@ -72,17 +70,16 @@ public class WelcomeActivity extends AppCompatActivity {
         String response = null;
         try {
             response = new ExistingVisitorOperationApiCaller().execute(visitorId, location, meetingPerson, purpose, guardId).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
         }
         if (response.equals("true")) {
-            Intent intent = new Intent(WelcomeActivity.this, ThankYouActivity.class);
+            Intent intent = new Intent(WelcomeVisitorActivity.this, ThankYouActivity.class);
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Employee Not Found! Please Check the Employee Name", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -91,9 +88,9 @@ public class WelcomeActivity extends AppCompatActivity {
         editor = sharedPreferences.edit();
         guardId = sharedPreferences.getString("sessionId", "default");
         if (guardId.equals("default")) {
-            Intent faceDetectIntent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent faceDetectIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(faceDetectIntent);
-            finish();
         }
     }
 
@@ -118,8 +115,8 @@ public class WelcomeActivity extends AppCompatActivity {
         new LogoutApiCaller().execute(sharedPreferences.getString("sessionId", "default"));
         editor.putString("sessionId", "default");
         editor.commit();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
     }
 }

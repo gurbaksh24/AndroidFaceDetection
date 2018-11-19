@@ -5,27 +5,40 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class ThankYouActivity extends AppCompatActivity {
+public class WelcomeEmployeeActivity extends AppCompatActivity {
     static String PREFERENCE = "GuardSessionPref";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    String guardId;
+    TextView welcomeMessage;
+    String[] employeeNameAndId;
+    String employeeName, employeeId, guardId;
+
+    private void initializeItems() {
+        welcomeMessage = (TextView) findViewById(R.id.welcome_employee_message);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thank_you);
+        setContentView(R.layout.activity_welcome_employee);
         android.support.v7.app.ActionBar bar = getSupportActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#161731")));
         checkSessionValidity();
+        initializeItems();
+        Intent intent = getIntent();
+        employeeNameAndId = intent.getStringExtra("Employee Name").substring(1, intent.getStringExtra("Employee Name").length() - 1).split(":");
+        employeeName = employeeNameAndId[0];
+        employeeId = employeeNameAndId[1];
+        welcomeMessage.setText("Welcome " + employeeName);
         expireActivityAfterFiveSeconds();
     }
 

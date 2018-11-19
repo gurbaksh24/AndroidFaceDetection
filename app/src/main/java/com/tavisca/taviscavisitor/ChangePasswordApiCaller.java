@@ -3,10 +3,14 @@ package com.tavisca.taviscavisitor;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -30,16 +34,32 @@ public class ChangePasswordApiCaller extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... empty) {
+    protected String doInBackground(String... userDetails) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
         URL apiEndPoint = null;
         try {
-            apiEndPoint = new URL("http://visitortavisca-dev.ap-south-1.elasticbeanstalk.com/api/Guard");
+            apiEndPoint = new URL("http://taviscaemployeevisitor-dev.ap-south-1.elasticbeanstalk.com/api/PasswordManipulation/ForgotPassword_ResetPassword");
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) apiEndPoint.openConnection();
-            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setRequestMethod("PUT");
+            httpURLConnection.setRequestProperty("Accept", "application/json");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+
+
+            OutputStream outStream = httpURLConnection.getOutputStream();
+            OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream, "UTF-8");
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("UserId", userDetails[0]);
+            jsonObject.put("Password", userDetails[1]);
+
+            outStreamWriter.write(String.valueOf(jsonObject));
+            outStreamWriter.flush();
+            outStreamWriter.close();
+            outStream.close();
+
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.connect();

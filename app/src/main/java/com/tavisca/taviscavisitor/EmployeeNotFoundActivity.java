@@ -5,27 +5,35 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class ThankYouActivity extends AppCompatActivity {
+public class EmployeeNotFoundActivity extends AppCompatActivity {
     static String PREFERENCE = "GuardSessionPref";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    TextView welcomeMessage;
     String guardId;
+
+    private void initializeItems() {
+        welcomeMessage = (TextView) findViewById(R.id.employee_not_found_message);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thank_you);
+        setContentView(R.layout.activity_employee_not_found);
         android.support.v7.app.ActionBar bar = getSupportActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#161731")));
         checkSessionValidity();
+        initializeItems();
+        welcomeMessage.setText("Face Not Matched");
         expireActivityAfterFiveSeconds();
     }
 

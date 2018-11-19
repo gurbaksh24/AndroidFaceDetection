@@ -15,13 +15,13 @@
         android:roundIcon="@mipmap/app_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
-        <activity android:name=".FaceDetectorService" />
-        <activity android:name=".NewVisitorEntry" />
-        <activity android:name=".OTPVerification" />
-        <activity android:name=".WelcomeActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".FaceDetectorVisitorActivity" />
+        <activity android:name=".NewVisitorEntryActivity" />
+        <activity android:name=".OTPVerificationActivity" />
+        <activity android:name=".WelcomeVisitorActivity" />
         <activity
-            android:name=".SplashScreen"
+            android:name=".SplashScreenActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,12 @@
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
 
-        <activity android:name=".ThankYouActivity"></activity>
+        <activity android:name=".ThankYouActivity" />
+        <activity android:name=".ApplicationChooserActivity" />
+        <activity android:name=".FaceDetectorEmployeeActivity" />
+        <activity android:name=".WelcomeEmployeeActivity" />
+        <activity android:name=".EmployeeNotFoundActivity" />
+        <activity android:name=".ChangePasswordActivity"></activity>
     </application>
 
 </manifest>

@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 
-public class FaceDetectorService extends AppCompatActivity {
+public class FaceDetectorVisitorActivity extends AppCompatActivity {
 
     static String PREFERENCE = "GuardSessionPref";
     private Camera mCamera;
@@ -43,6 +43,7 @@ public class FaceDetectorService extends AppCompatActivity {
     private static AmazonS3 s3Client;
     private static String bucket = "visitors-bucket";
     private static TransferUtility transferUtility;
+    String faceCompareType = "visitors";
     FrameLayout preview;
     SharedPreferences sharedPreferences;
     File uploadToS3;
@@ -59,6 +60,7 @@ public class FaceDetectorService extends AppCompatActivity {
             s3credentialsProvider();
             setTransferUtility();
             uploadFileToS3();
+            mPreview.safeToTakePicture = true;
         }
     };
 
@@ -120,8 +122,9 @@ public class FaceDetectorService extends AppCompatActivity {
                         new Camera.FaceDetectionListener() {
                             @Override
                             public void onFaceDetection(Camera.Face[] faces, Camera camera) {
-                                if (faces.length > 0) {
+                                if (faces.length > 0 && mPreview.safeToTakePicture == true) {
                                     mCamera.takePicture(null, null, mPicture);
+                                    mPreview.safeToTakePicture = false;
                                 }
                             }
                         }
@@ -135,7 +138,10 @@ public class FaceDetectorService extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mCamera.takePicture(null, null, mPicture);
+                        if (mPreview.safeToTakePicture) {
+                            mCamera.takePicture(null, null, mPicture);
+                            mPreview.safeToTakePicture = false;
+                        }
                     }
                 }
         );
@@ -175,29 +181,20 @@ public class FaceDetectorService extends AppCompatActivity {
                 FaceRecognitionApiCaller faceRecognitionApiCaller = new FaceRecognitionApiCaller();
                 String response = null;
                 try {
-                    response = faceRecognitionApiCaller.execute().get();
+                    response = faceRecognitionApiCaller.execute(faceCompareType).get();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
                 if (state.toString().equals("COMPLETED")) {
-                    /*if (response!=null && response.equals("true")) {
-                        Intent intent = new Intent(FaceDetectorService.this, WelcomeActivity.class);
-                        startActivity(intent);
-                        Toast.makeText(FaceDetectorService.this, "Face Recognised", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Intent intent = new Intent(FaceDetectorService.this, NewVisitorEntry.class);
-                        startActivity(intent);
-                        Toast.makeText(FaceDetectorService.this, "Face Not Recognised", Toast.LENGTH_SHORT).show();
-                    }*/
                     if (response != null && !response.equals("\"No Match Found\"") && !response.equals("\"Exception Occurred\"")) {
-                        Intent intent = new Intent(FaceDetectorService.this, WelcomeActivity.class);
+                        Intent intent = new Intent(FaceDetectorVisitorActivity.this, WelcomeVisitorActivity.class);
                         intent.putExtra("Visitor Name", response);
                         startActivity(intent);
-                        Toast.makeText(FaceDetectorService.this, "Face Recognised", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FaceDetectorVisitorActivity.this, "Face Recognised", Toast.LENGTH_SHORT).show();
                     } else {
-                        Intent intent = new Intent(FaceDetectorService.this, NewVisitorEntry.class);
+                        Intent intent = new Intent(FaceDetectorVisitorActivity.this, NewVisitorEntryActivity.class);
                         startActivity(intent);
-                        Toast.makeText(FaceDetectorService.this, "Face Not Recognised", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FaceDetectorVisitorActivity.this, "Face Not Recognised", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -218,9 +215,8 @@ public class FaceDetectorService extends AppCompatActivity {
     private boolean saveImageInDirectory(byte[] data) {
         File pictureFileDir = getDir();
         if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
-
             Log.d("Camera Error", "Can't create directory to save image.");
-            Toast.makeText(FaceDetectorService.this, "Can't create directory to save image.", Toast.LENGTH_LONG).show();
+            Toast.makeText(FaceDetectorVisitorActivity.this, "Can't create directory to save image.", Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -235,7 +231,7 @@ public class FaceDetectorService extends AppCompatActivity {
             return true;
         } catch (Exception error) {
             Log.d("Camera Error", "File" + filename + "not saved: " + error.getMessage());
-            Toast.makeText(FaceDetectorService.this, "Image could not be saved.", Toast.LENGTH_LONG).show();
+            Toast.makeText(FaceDetectorVisitorActivity.this, "Image could not be saved.", Toast.LENGTH_LONG).show();
             return false;
         }
     }
@@ -255,11 +251,22 @@ public class FaceDetectorService extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.change_password) {
-            Toast.makeText(this, "Change Password", Toast.LENGTH_SHORT).show();
+            changePassword();
         } else if (item.getItemId() == R.id.logout) {
             logout();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void changePassword() {
+        Intent intent = new Intent(getApplicationContext(), ChangePasswordActivity.class);
+        startActivity(intent);
+        try {
+            mCamera.release();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        finish();
     }
 
     private void logout() {
@@ -268,7 +275,8 @@ public class FaceDetectorService extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("sessionId", "default");
         editor.commit();
-        Intent intent = new Intent(FaceDetectorService.this, MainActivity.class);
+        Intent intent = new Intent(FaceDetectorVisitorActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }
@@ -276,7 +284,8 @@ public class FaceDetectorService extends AppCompatActivity {
     private void checkSessionValidity() {
         sharedPreferences = getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
         if (sharedPreferences.getString("sessionId", "default").equals("default")) {
-            Intent faceDetectIntent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent faceDetectIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(faceDetectIntent);
             finish();
         }

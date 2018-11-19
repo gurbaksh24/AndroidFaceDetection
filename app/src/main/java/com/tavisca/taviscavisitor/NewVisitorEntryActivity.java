@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class NewVisitorEntry extends AppCompatActivity {
+public class NewVisitorEntryActivity extends AppCompatActivity {
 
     static String PREFERENCE = "GuardSessionPref";
     EditText name, contact, govtId, comingFrom, whomToMeet, purposeOfVisit;
@@ -44,52 +44,6 @@ public class NewVisitorEntry extends AppCompatActivity {
         setContentView(R.layout.activity_new_visitor_entry);
         checkSessionValidity();
         initializeItems();
-/*
-        whomToMeet.addTextChangedListener(
-                new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        FindEmployeesApiCaller findEmployeesApiCaller = new FindEmployeesApiCaller();
-                        String response=null;
-                        List<String> matchedElements = new ArrayList<>();
-                        try {
-                            response = findEmployeesApiCaller.execute(s.toString()).get();
-
-
-                            JSONArray jsonArray = new JSONArray(response);
-                            for(int index=0;index<jsonArray.length();index++){
-                                JSONObject jsonElement = jsonArray.getJSONObject(index);
-                                String element = jsonElement.getString("matchingResult");
-                                matchedElements.add(element);
-                            }
-                            String[] matchedData = matchedElements.toArray(new String[0]);
-
-                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(NewVisitorEntry.this, android.R.layout.select_dialog_item, matchedData);
-                            autoCompleteTextView.setThreshold(1);
-                            autoCompleteTextView.setBackgroundColor(Color.BLACK);
-                            autoCompleteTextView.setTextColor(Color.RED);
-                            autoCompleteTextView.setAdapter(arrayAdapter);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                }
-        );*/
-
         submit.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -108,7 +62,7 @@ public class NewVisitorEntry extends AppCompatActivity {
     }
 
     private void openOtpVerificationActivity(String otpResponse) {
-        Intent intent = new Intent(NewVisitorEntry.this, OTPVerification.class);
+        Intent intent = new Intent(NewVisitorEntryActivity.this, OTPVerificationActivity.class);
         intent.putExtra("name", name.getText().toString());
         intent.putExtra("contact", contact.getText().toString());
         intent.putExtra("govtId", govtId.getText().toString());
@@ -117,7 +71,7 @@ public class NewVisitorEntry extends AppCompatActivity {
         intent.putExtra("purposeOfVisit", purposeOfVisit.getText().toString());
         intent.putExtra("guardId", sharedPreferences.getString("sessionId", "default"));
         if (otpResponse == null)
-            Toast.makeText(NewVisitorEntry.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NewVisitorEntryActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
         else {
             intent.putExtra("otpGenerated", otpResponse);
             startActivity(intent);
@@ -129,7 +83,8 @@ public class NewVisitorEntry extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         if (sharedPreferences.getString("sessionId", "default").equals("default")) {
-            Intent faceDetectIntent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent faceDetectIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(faceDetectIntent);
             finish();
         }
@@ -155,8 +110,8 @@ public class NewVisitorEntry extends AppCompatActivity {
         new LogoutApiCaller().execute(sharedPreferences.getString("sessionId", "default"));
         editor.putString("sessionId", "default");
         editor.commit();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
     }
 }

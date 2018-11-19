@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class OTPVerification extends AppCompatActivity {
+public class OTPVerificationActivity extends AppCompatActivity {
 
     static String PREFERENCE = "GuardSessionPref";
     EditText otp;
@@ -49,13 +49,15 @@ public class OTPVerification extends AppCompatActivity {
                 otpEnteredByVisitor = otp.getText().toString();
                 if (otpEnteredByVisitor.equals(otpGenerated)) {
                     saveNewEntry();
-                    Toast.makeText(OTPVerification.this, "Visitor Entry Saved", Toast.LENGTH_LONG).show();
-                    Intent intentToWelcomeActivity = new Intent(OTPVerification.this, WelcomeActivity.class);
+                    Toast.makeText(OTPVerificationActivity.this, "Visitor Entry Saved", Toast.LENGTH_LONG).show();
+                    /*Intent intentToWelcomeActivity = new Intent(OTPVerificationActivity.this, WelcomeVisitorActivity.class);
                     intentToWelcomeActivity.putExtra("Visitor Name", name);
-                    startActivity(intentToWelcomeActivity);
+                    startActivity(intentToWelcomeActivity);*/
+                    Intent intent = new Intent(OTPVerificationActivity.this, ThankYouActivity.class);
+                    startActivity(intent);
                     finish();
                 } else
-                    Toast.makeText(OTPVerification.this, "Wrong OTP", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OTPVerificationActivity.this, "Wrong OTP", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -77,21 +79,23 @@ public class OTPVerification extends AppCompatActivity {
         try {
             response = newVisitorEntryApiCaller.execute(name, contact, govtId, comingFrom, whomToMeet, purposeOfVisit, guardId).get();
         } catch (Exception exception) {
+            Toast.makeText(this, "Employee Not Found! Please Check the Employee Name", Toast.LENGTH_SHORT).show();
             exception.printStackTrace();
+            finish();
         }
         if (!response.equals("false"))
-            Toast.makeText(OTPVerification.this, "Welcome " + response.toUpperCase(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(OTPVerificationActivity.this, "Welcome " + response.toUpperCase(), Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(OTPVerification.this, "Something went wrong while adding entry", Toast.LENGTH_SHORT).show();
+            Toast.makeText(OTPVerificationActivity.this, "Something went wrong while adding entry", Toast.LENGTH_SHORT).show();
     }
 
     private void checkSessionValidity() {
         sharedPreferences = getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         if (sharedPreferences.getString("sessionId", "default").equals("default")) {
-            Intent faceDetectIntent = new Intent(OTPVerification.this, MainActivity.class);
+            Intent faceDetectIntent = new Intent(OTPVerificationActivity.this, LoginActivity.class);
+            faceDetectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(faceDetectIntent);
-            finish();
         }
     }
 
@@ -116,8 +120,8 @@ public class OTPVerification extends AppCompatActivity {
         new LogoutApiCaller().execute(sharedPreferences.getString("sessionId", "default"));
         editor.putString("sessionId", "default");
         editor.commit();
-        Intent intent = new Intent(OTPVerification.this, MainActivity.class);
+        Intent intent = new Intent(OTPVerificationActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
     }
 }
